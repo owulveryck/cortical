@@ -16,7 +16,6 @@ package cortical
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -133,7 +132,7 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 	}()
 	go func() {
 		for {
-			MessageType, p, err := conn.ReadMessage()
+			_, p, err := conn.ReadMessage()
 			if err != nil {
 				if websocket.IsCloseError(err,
 					websocket.CloseNormalClosure,
@@ -161,10 +160,6 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				// Temporary failure, nevermind
-				continue
-			}
-			if MessageType != websocket.TextMessage {
-				handleErr(w, errors.New("Only text []byte are supported"), http.StatusNotImplemented)
 				continue
 			}
 			rcv <- p
