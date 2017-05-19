@@ -1,0 +1,1 @@
+export SOCKETCAM_SCHEME=https
