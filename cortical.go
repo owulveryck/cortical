@@ -88,7 +88,6 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 	sendersChan := make([]<-chan []byte, sndrsNum)
 	chans := fanOut(rcv, rcvsNum, 1)
 	for i := 0; i < sndrsNum; i++ {
-		//sendersChan[i] = send(ctx, stop[i], senders[i])
 		sendersChan[i] = senders[i](ctx)
 	}
 	for i := range chans {
@@ -102,7 +101,24 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 			p := <-send
 			err := conn.WriteMessage(websocket.TextMessage, p)
 			if err != nil {
-				if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseNoStatusReceived) {
+				if websocket.IsCloseError(err,
+					websocket.CloseNormalClosure,
+					websocket.CloseGoingAway,
+					websocket.CloseNormalClosure,
+					websocket.CloseGoingAway,
+					websocket.CloseProtocolError,
+					websocket.CloseUnsupportedData,
+					websocket.CloseNoStatusReceived,
+					websocket.CloseAbnormalClosure,
+					websocket.CloseInvalidFramePayloadData,
+					websocket.ClosePolicyViolation,
+					websocket.CloseMessageTooBig,
+					websocket.CloseMandatoryExtension,
+					websocket.CloseInternalServerErr,
+					websocket.CloseServiceRestart,
+					websocket.CloseTryAgainLater,
+					websocket.CloseTLSHandshake,
+					websocket.CloseNoStatusReceived) {
 					closed <- struct{}{}
 					return
 				}
@@ -110,7 +126,7 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 					closed <- struct{}{}
 					return
 				}
-				handleErr(w, err, http.StatusInternalServerError)
+				// Temporary failure, nevermind
 				continue
 			}
 		}
@@ -119,7 +135,24 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 		for {
 			MessageType, p, err := conn.ReadMessage()
 			if err != nil {
-				if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseNoStatusReceived) {
+				if websocket.IsCloseError(err,
+					websocket.CloseNormalClosure,
+					websocket.CloseGoingAway,
+					websocket.CloseNormalClosure,
+					websocket.CloseGoingAway,
+					websocket.CloseProtocolError,
+					websocket.CloseUnsupportedData,
+					websocket.CloseNoStatusReceived,
+					websocket.CloseAbnormalClosure,
+					websocket.CloseInvalidFramePayloadData,
+					websocket.ClosePolicyViolation,
+					websocket.CloseMessageTooBig,
+					websocket.CloseMandatoryExtension,
+					websocket.CloseInternalServerErr,
+					websocket.CloseServiceRestart,
+					websocket.CloseTryAgainLater,
+					websocket.CloseTLSHandshake,
+					websocket.CloseNoStatusReceived) {
 					closed <- struct{}{}
 					return
 				}
@@ -127,7 +160,7 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 					closed <- struct{}{}
 					return
 				}
-				handleErr(w, err, http.StatusInternalServerError)
+				// Temporary failure, nevermind
 				continue
 			}
 			if MessageType != websocket.TextMessage {
@@ -143,23 +176,6 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 		stop[i] <- struct{}{}
 	}
 }
-
-/*
-func send(ctx context.Context, stop chan struct{}, f GetInfoFromCortexFunc) chan []byte {
-	c := make(chan []byte)
-	go func() {
-		for {
-			select {
-			case <-stop:
-				close(c)
-				return
-			case c <- <-f(ctx):
-			}
-		}
-	}()
-	return c
-}
-*/
 
 func receive(ctx context.Context, msg <-chan []byte, stop chan struct{}, f SendInfoToCortex) {
 	go func() {

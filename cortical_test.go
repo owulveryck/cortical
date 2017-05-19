@@ -72,6 +72,15 @@ func TestPingPong(t *testing.T) {
 		t.Errorf("write close: %v", err)
 	}
 }
+func TestClosing(t *testing.T) {
+	// Now test the websocket
+	wsURL := url.URL{Scheme: "ws", Host: tsURL.Host, Path: "/ws"}
+	c, _, err := websocket.DefaultDialer.Dial(wsURL.String(), nil)
+	if err != nil {
+		t.Errorf("Cannot connect to the websocket %v", err)
+	}
+	defer c.Close()
+}
 
 func TestServeWS(t *testing.T) {
 	// Now test the websocket
