@@ -13,16 +13,16 @@ Cortical is therefore a very convenient way to distribute messages to "processin
 
 The "processing units" are called _Cortexes_ and do not need to be aware of any web mechanism.
 
-### `Cortex`
+### Cortexes
 
 A cortex is any function that provides the two methods:
 
-* A "send" function that returns a channel of `[]byte`. The content of the channel is sent to the websocket once available (cf `[GetInfoFromCortexFunc](https://godoc.org/github.com/owulveryck/cortical#GetInfoFromCortexFunc)`)
-* A "receive" method that take a pointer of `[]byte`. This function is called each time a message is received (cf `[SendInfoToCortex](https://godoc.org/github.com/owulveryck/cortical#SendInfoToCortex)`)
+* A "send" function that returns a channel of `[]byte`. The content of the channel is sent to the websocket once available (cf [`GetInfoFromCortexFunc`](https://godoc.org/github.com/owulveryck/cortical#GetInfoFromCortexFunc))
+* A "receive" method that take a pointer of `[]byte`. This function is called each time a message is received (cf [`SendInfoToCortex`](https://godoc.org/github.com/owulveryck/cortical#SendInfoToCortex))
 
 Cortical take care of extracting and sending the `[]byte` to the websocket and dispatches them through all the cortexes.
 
-### Registering the cortexes and creating a `[http.HandlerFunc](https://golang.org/pkg/net/http/#HandlerFunc)` 
+### Registering the cortexes and creating a [http.HandlerFunc](https://golang.org/pkg/net/http/#HandlerFunc)
 
 TODO: See examples
 
