@@ -6,6 +6,10 @@
 
 # Cortical
 
+```go
+import "github.com/owulveryck/cortical"
+```
+
 ## What is Cortical?
 
 Cortical is a go ~~framework~~ ~~middleware~~ piece of code that acts as a message dispatcher. Then messages are transmitted in full duplex over a websocket.
