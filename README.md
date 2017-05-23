@@ -24,12 +24,25 @@ A cortex is any go code that provides two functions:
 * A "send" function that returns a channel of `[]byte`. The content of the channel is sent to the websocket once available (cf [`GetInfoFromCortexFunc`](https://godoc.org/github.com/owulveryck/cortical#GetInfoFromCortexFunc))
 * A "receive" method that take a pointer of `[]byte`. This function is called each time a message is received (cf [`SendInfoToCortex`](https://godoc.org/github.com/owulveryck/cortical#SendInfoToCortex))
 
-A cortex object must therefore implement an extra function that returns the previous ones for commodity:
+A cortex object must therefore be compatible with the `cortical.Cortex` interface:
 
 ex:
 ```go
-func (d *cortex) func(ctx context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex) {
-    ...
+// echo is a dummy type that reads a message, and send back an "ack"
+type echo struct{}
+
+func new() *echo {
+	return &echo{}
+}
+
+// NewCortex is filling the cortical.Cortex interface
+func (e *echo) NewCortex(ctx context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex) {
+	c := make(chan []byte)
+	return func(ctx context.Context) chan []byte {
+			return c
+		}, func(ctx context.Context, b *[]byte) {
+			c <- *b
+		}
 }
 ```
 
@@ -44,8 +57,8 @@ By now, the registration of cortexes is done at the creation of the Cortical obj
 ```go
 brain := &cortical.Cortical{
      Upgrader: websocket.Upgrader{},
-     Cortexs:  []func(context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex){
-          NewCortex,
+     Cortexes:  []cortical.Cortex{
+          &echo{}, // See example in the previous paragraph
      }, 
 }
 http.HandleFunc("/ws", brain.ServeWS)

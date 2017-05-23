@@ -110,3 +110,41 @@ func TestServeWS(t *testing.T) {
 		t.Errorf("write close: %v", err)
 	}
 }
+
+func BenchmarkServeWS(b *testing.B) {
+	// Now test the websocket
+	test := []byte("test")
+	wsURL := url.URL{Scheme: "ws", Host: tsURL.Host, Path: "/ws"}
+	for n := 0; n < b.N; n++ {
+		c, _, err := websocket.DefaultDialer.Dial(wsURL.String(), nil)
+		if err != nil {
+			b.Errorf("Cannot connect to the websocket %v", err)
+		}
+		defer c.Close()
+		done := make(chan bool)
+
+		go func() {
+			defer close(done)
+			tm, message, err := c.ReadMessage()
+			if err != nil {
+				b.Fatal("Error in the message reception: %v (type %v)", err, tm)
+			}
+			if string(message) != string(test) {
+				b.Fatal("Message received should be the same as the message sent")
+			}
+			done <- true
+		}()
+
+		err = c.WriteMessage(websocket.TextMessage, test)
+		if err != nil {
+			b.Errorf("Cannot write %v to websocket: %v", test, err)
+		}
+
+		<-done
+		err = c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseGoingAway, ""))
+		if err != nil {
+			b.Errorf("write close: %v", err)
+		}
+
+	}
+}
