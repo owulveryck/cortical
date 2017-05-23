@@ -28,7 +28,18 @@ Cortical take care of extracting and sending the `[]byte` to the websocket and d
 
 ### Registering the cortexes and creating a [http.HandlerFunc](https://golang.org/pkg/net/http/#HandlerFunc)
 
-TODO: See examples
+By now, the registration of cortexes is done at the creation of the Cortical object.
+
+*WARNING* This will probably change in the future
+
+```go
+brain := &cortical.Cortical{
+     Upgrader: websocket.Upgrader{},
+     Cortexs:  []func(context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex){NewCortex}, 
+}
+http.HandleFunc("/ws", brain.ServeWS)
+log.Fatal(http.ListenAndServe(":8080", nil))
+```
 
 ### Examples of cortex
 
@@ -40,4 +51,6 @@ See the [example in godoc](https://godoc.org/github.com/owulveryck/cortical#exam
 2. Because I only know how to code in go
 3. *The real reason*: concurrency (take a look at [Rob Pike - 'Concurrency Is Not Parallelism' on youtube](https://www.youtube.com/watch?v=cN_DpYBzKso&t=680s) to truly understand why)
 
+# Caution
 
+The API may change a lot; use it at your own risks. PR are welcome.
