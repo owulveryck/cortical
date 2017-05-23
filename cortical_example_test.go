@@ -15,14 +15,17 @@ type echo struct {
 	c    chan []byte
 }
 
-// NewCortex is filling the  ...
-func NewCortex(ctx context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex) {
+func new() *echo {
 	c := make(chan []byte)
-	echo := &echo{
+	return &echo{
 		pong: "pong",
 		c:    c,
 	}
-	return echo.get, echo.receive
+}
+
+// NewCortex is implementing the Cortex interface
+func (e *echo) NewCortex(ctx context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex) {
+	return e.get, e.receive
 }
 
 func (e *echo) get(ctx context.Context) chan []byte {
@@ -36,7 +39,7 @@ func (e *echo) receive(ctx context.Context, b *[]byte) {
 func Example() {
 	brain := &cortical.Cortical{
 		Upgrader: websocket.Upgrader{},
-		Cortexs:  []func(context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex){NewCortex},
+		Cortexes: []cortical.Cortex{new()},
 	}
 	http.HandleFunc("/ws", brain.ServeWS)
 

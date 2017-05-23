@@ -1,11 +1,6 @@
 // Package cortical is a utility that handles websocket connexions and dispatch
-// all the []byte received to the consumers
+// all the []byte received to the consumers called "cortex".
 // It also get all the informations of the producers and sends them back to the websocket
-//
-// Cortex is the interface that every "processor" must implement.
-// The first output is a send function and the second argument is a receive function
-// Every Cortex will receive every elements through their receive function
-// Every send function will be called in an endless loop.
 //
 // The context passed to the Cortex holds a uuid encoded into a string that is specific for each connection
 // The UUID can be retrieved by calling
@@ -21,11 +16,16 @@ import (
 	"net/http"
 )
 
+// A Cortex shall implement an interface that returns two functions for getting and sending a byte array
+type Cortex interface {
+	NewCortex(context.Context) (GetInfoFromCortexFunc, SendInfoToCortex)
+}
+
 // Cortical specifies how to upgrade an HTTP connection to a Websocket connection
 // as well as the action to be performed on receive a []byte
 type Cortical struct {
 	Upgrader websocket.Upgrader
-	Cortexs  []func(context.Context) (GetInfoFromCortexFunc, SendInfoToCortex)
+	Cortexes []Cortex
 }
 
 // ContextKeyType is the type of the key of the context
@@ -67,8 +67,8 @@ func (wsd *Cortical) ServeWS(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 	var senders = make([]GetInfoFromCortexFunc, 0)
 	var receivers = make([]SendInfoToCortex, 0)
-	for _, cortex := range wsd.Cortexs {
-		snd, rcv := cortex(ctx)
+	for _, cortex := range wsd.Cortexes {
+		snd, rcv := cortex.NewCortex(ctx)
 		if snd != nil {
 			senders = append(senders, snd)
 		}

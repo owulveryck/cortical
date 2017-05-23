@@ -21,13 +21,16 @@ type Echo struct {
 	c chan []byte
 }
 
-// NewCortex is filling the  ...
-func NewCortex(ctx context.Context) (GetInfoFromCortexFunc, SendInfoToCortex) {
+func new() *Echo {
 	c := make(chan []byte)
-	echo := &Echo{
+	return &Echo{
 		c: c,
 	}
-	return echo.Get, echo.Receive
+}
+
+// NewCortex is filling the  ...
+func (e *Echo) NewCortex(ctx context.Context) (GetInfoFromCortexFunc, SendInfoToCortex) {
+	return e.Get, e.Receive
 }
 
 // Get ...
@@ -43,7 +46,7 @@ func init() {
 	router := mux.NewRouter().StrictSlash(true)
 	brain := &Cortical{
 		Upgrader: websocket.Upgrader{},
-		Cortexs:  []func(context.Context) (GetInfoFromCortexFunc, SendInfoToCortex){NewCortex},
+		Cortexes: []Cortex{new()},
 	}
 
 	router.
@@ -91,16 +94,14 @@ func TestServeWS(t *testing.T) {
 		t.Errorf("Cannot connect to the websocket %v", err)
 	}
 	defer c.Close()
-
 	done := make(chan bool)
 
 	go func() {
 		defer close(done)
 		tm, message, err := c.ReadMessage()
 		if err != nil {
-			t.Errorf("Error in the message reception: %v (type %v)", err, tm)
+			t.Fatal("Error in the message reception: %v (type %v)", err, tm)
 		}
-		//t.Log("Received message %s of type %v", message, tm)
 		if string(message) != string(test) {
 			t.Fatal("Message received should be the same as the message sent")
 		}
