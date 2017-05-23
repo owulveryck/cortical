@@ -17,6 +17,14 @@ Cortical is therefore a very convenient way to distribute messages to "processin
 
 The "processing units" are called _Cortexes_ and do not need to be aware of any web mechanism.
 
+## _Cortical_? _Cortex_? is it related to ML?
+
+Actually I have developed this code as a support for my tests with tensorflow, Google Cloud Plafeform and AWS ML services.
+I needed a way to capture images from my webcam and to speak out loud. I have used my chrome browser for this purpose.
+Every Cortex is a specific ML implementation (eg a _Memory Cortex_ that captures all the images and send them to a cloud storage is needed for training models).
+
+I will [blog](blog.owulveryck.info) about it soon.
+
 ### Cortexes
 
 A cortex is any go code that provides two functions:
@@ -78,3 +86,14 @@ See the [example in godoc](https://godoc.org/github.com/owulveryck/cortical#exam
 # Caution
 
 The API may change a lot; use it at your own risks. PR are welcome.
+
+# TODO
+
+- [x] Tests
+- [x] Doc
+- [x] Benchmarks
+- [ ] Demo
+- [ ] More functional tests
+- [ ] Using the context cancel mechanism instead of my `done chan`
+- [ ] Evaluating the opportunity of changing the interface for an `io.ReadWriteCloser`
+- [ ] More and better doc
