@@ -13,7 +13,7 @@ import "github.com/owulveryck/cortical"
 ## What is Cortical?
 
 Cortical is a go ~~framework~~ ~~middleware~~ piece of code that acts as a message dispatcher. Then messages are transmitted in full duplex over a websocket.
-Cortical is therefore a very convenient way to distribute messages to "processing units" (other go functions) and to get the responses back in a concurrent way.
+Cortical is therefore a very convenient way to distribute messages to "processing units" (other go functions) and to get the responses back in a **concurrent** and **asynchronous** way.
 
 The "processing units" are called _Cortexes_ and do not need to be aware of any web mechanism.
 
