@@ -16,32 +16,23 @@ var (
 	tsURL      *url.URL
 )
 
-// Echo is a dummy type that reads a message, wait for some time and sends ret back
-type Echo struct {
-	c chan []byte
-}
+// echo is a dummy type that reads a message, wait for some time and sends ret back
+type echo struct{}
 
-func new() *Echo {
-	c := make(chan []byte)
-	return &Echo{
-		c: c,
-	}
+func new() *echo {
+	return &echo{}
 }
 
 // NewCortex is filling the  ...
-func (e *Echo) NewCortex(ctx context.Context) (GetInfoFromCortexFunc, SendInfoToCortex) {
-	return e.Get, e.Receive
+func (e *echo) NewCortex(ctx context.Context) (GetInfoFromCortexFunc, SendInfoToCortex) {
+	c := make(chan []byte)
+	return func(ctx context.Context) chan []byte {
+			return c
+		}, func(ctx context.Context, b *[]byte) {
+			c <- *b
+		}
 }
 
-// Get ...
-func (e *Echo) Get(ctx context.Context) chan []byte {
-	return e.c
-}
-
-// Receive ...
-func (e *Echo) Receive(ctx context.Context, b *[]byte) {
-	e.c <- *b
-}
 func init() {
 	router := mux.NewRouter().StrictSlash(true)
 	brain := &Cortical{

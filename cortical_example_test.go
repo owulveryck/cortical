@@ -10,30 +10,20 @@ import (
 )
 
 // echo is a dummy type that reads a message, and send back an "ack"
-type echo struct {
-	pong string
-	c    chan []byte
-}
+type echo struct{}
 
 func new() *echo {
-	c := make(chan []byte)
-	return &echo{
-		pong: "pong",
-		c:    c,
-	}
+	return &echo{}
 }
 
-// NewCortex is implementing the Cortex interface
+// NewCortex is filling the  ...
 func (e *echo) NewCortex(ctx context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex) {
-	return e.get, e.receive
-}
-
-func (e *echo) get(ctx context.Context) chan []byte {
-	return e.c
-}
-
-func (e *echo) receive(ctx context.Context, b *[]byte) {
-	e.c <- []byte(e.pong)
+	c := make(chan []byte)
+	return func(ctx context.Context) chan []byte {
+			return c
+		}, func(ctx context.Context, b *[]byte) {
+			c <- *b
+		}
 }
 
 func Example() {
