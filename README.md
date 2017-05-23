@@ -6,3 +6,34 @@
 
 # Cortical
 
+## What is Cortical?
+
+Cortical is a go ~~framework~~ ~~middleware~~ piece of code that acts as a message dispatcher. Then messages are transmitted in full duplex over a websocket.
+Cortical is therefore a very convenient way to distribute messages to "processing units" (other go functions) and to get the responses back in a concurrent way.
+
+The "processing units" are called _Cortexes_ and do not need to be aware of any web mechanism.
+
+### `Cortex`
+
+A cortex is any function that provides the two methods:
+
+* A "send" function that returns a channel of `[]byte`. The content of the channel is sent to the websocket once available (cf `[GetInfoFromCortexFunc](https://godoc.org/github.com/owulveryck/cortical#GetInfoFromCortexFunc)`)
+* A "receive" method that take a pointer of `[]byte`. This function is called each time a message is received (cf `[SendInfoToCortex](https://godoc.org/github.com/owulveryck/cortical#SendInfoToCortex)`)
+
+Cortical take care of extracting and sending the `[]byte` to the websocket and dispatches them through all the cortexes.
+
+### Registering the cortexes and creating a `[http.HandlerFunc](https://golang.org/pkg/net/http/#HandlerFunc)` 
+
+TODO: See examples
+
+### Examples of cortex
+
+See the [example in godoc](https://godoc.org/github.com/owulveryck/cortical#example-package)
+
+## Why is it coded in go?
+
+1. Because I love go
+2. Because I only know how to code in go
+3. *The real reason*: concurrency (take a look at [Rob Pike - 'Concurrency Is Not Parallelism' on youtube](https://www.youtube.com/watch?v=cN_DpYBzKso&t=680s) to truly understand why)
+
+
