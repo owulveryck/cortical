@@ -19,7 +19,7 @@ The "processing units" are called _Cortexes_ and do not need to be aware of any 
 
 ### Cortexes
 
-A cortex is any go code that provides the two functions:
+A cortex is any go code that provides two functions:
 
 * A "send" function that returns a channel of `[]byte`. The content of the channel is sent to the websocket once available (cf [`GetInfoFromCortexFunc`](https://godoc.org/github.com/owulveryck/cortical#GetInfoFromCortexFunc))
 * A "receive" method that take a pointer of `[]byte`. This function is called each time a message is received (cf [`SendInfoToCortex`](https://godoc.org/github.com/owulveryck/cortical#SendInfoToCortex))
