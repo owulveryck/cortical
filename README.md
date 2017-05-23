@@ -35,7 +35,9 @@ By now, the registration of cortexes is done at the creation of the Cortical obj
 ```go
 brain := &cortical.Cortical{
      Upgrader: websocket.Upgrader{},
-     Cortexs:  []func(context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex){NewCortex}, 
+     Cortexs:  []func(context.Context) (cortical.GetInfoFromCortexFunc, cortical.SendInfoToCortex){
+          NewCortex,
+     }, 
 }
 http.HandleFunc("/ws", brain.ServeWS)
 log.Fatal(http.ListenAndServe(":8080", nil))
