@@ -23,7 +23,7 @@ Actually I have developed this code as a support for my tests with tensorflow, G
 I needed a way to capture images from my webcam and to speak out loud. I have used my chrome browser for this purpose.
 Every Cortex is a specific ML implementation (eg a _Memory Cortex_ that captures all the images and send them to a cloud storage is needed for training models).
 
-I will [blog](blog.owulveryck.info) about it soon.
+See my [blog post _"Chrome, the eye of the cloud - Computer vision with deep learning and only 2Gb of RAM"_](https://blog.owulveryck.info/2017/05/16/chrome-the-eye-of-the-cloud---computer-vision-with-deep-learning-and-only-2gb-of-ram.html) for more explanation.
 
 ### Cortexes
 
