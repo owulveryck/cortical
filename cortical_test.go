@@ -91,7 +91,7 @@ func TestServeWS(t *testing.T) {
 		defer close(done)
 		tm, message, err := c.ReadMessage()
 		if err != nil {
-			t.Fatal("Error in the message reception: %v (type %v)", err, tm)
+			t.Fatalf("Error in the message reception: %v (type %v)", err, tm)
 		}
 		if string(message) != string(test) {
 			t.Fatal("Message received should be the same as the message sent")
@@ -127,7 +127,7 @@ func BenchmarkServeWS(b *testing.B) {
 			defer close(done)
 			tm, message, err := c.ReadMessage()
 			if err != nil {
-				b.Fatal("Error in the message reception: %v (type %v)", err, tm)
+				b.Fatalf("Error in the message reception: %v (type %v)", err, tm)
 			}
 			if string(message) != string(test) {
 				b.Fatal("Message received should be the same as the message sent")
