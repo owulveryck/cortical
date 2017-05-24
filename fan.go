@@ -5,7 +5,7 @@ import "sync"
 func fanOut(ch <-chan []byte, size, lag int) []chan []byte {
 	cs := make([]chan []byte, size)
 	for i := range cs {
-		// The size of the channels buffer controls how far behind the recievers
+		// The size of the channels buffer controls how far behind the receivers
 		// of the fanOut channels can lag the other channels.
 		cs[i] = make(chan []byte, lag)
 	}
